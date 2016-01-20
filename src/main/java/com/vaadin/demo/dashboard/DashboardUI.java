@@ -3,6 +3,8 @@ package com.vaadin.demo.dashboard;
 import java.util.Locale;
 
 import com.google.common.eventbus.Subscribe;
+import com.vaadin.addon.touchkit.annotations.CacheManifestEnabled;
+import com.vaadin.addon.touchkit.annotations.OfflineModeEnabled;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.Widgetset;
@@ -30,6 +32,8 @@ import com.vaadin.ui.themes.ValoTheme;
 @Widgetset("com.vaadin.demo.dashboard.DashboardWidgetSet")
 @Title("QuickTickets Dashboard")
 @SuppressWarnings("serial")
+@OfflineModeEnabled
+@CacheManifestEnabled
 public final class DashboardUI extends UI {
 
     /*
@@ -40,6 +44,7 @@ public final class DashboardUI extends UI {
      */
     private final DataProvider dataProvider = new DummyDataProvider();
     private final DashboardEventBus dashboardEventbus = new DashboardEventBus();
+    private DashboardModeOfflineExtension offlineModeSettings;
 
     @Override
     protected void init(final VaadinRequest request) {
@@ -50,6 +55,13 @@ public final class DashboardUI extends UI {
         addStyleName(ValoTheme.UI_WITH_MENU);
 
         updateContent();
+        
+        // Use Parking custom offline mode
+        offlineModeSettings = new DashboardModeOfflineExtension();
+        offlineModeSettings.extend(this);
+        offlineModeSettings.setPersistentSessionCookie(true);
+        // Default is 10 secs.
+        offlineModeSettings.setOfflineModeTimeout(15);
 
         // Some views need to be aware of browser resize events so a
         // BrowserResizeEvent gets fired to the event bus on every occasion.
@@ -61,6 +73,10 @@ public final class DashboardUI extends UI {
                         DashboardEventBus.post(new BrowserResizeEvent());
                     }
                 });
+    }
+    
+    public void goOffline() {
+        offlineModeSettings.goOffline();
     }
 
     /**
