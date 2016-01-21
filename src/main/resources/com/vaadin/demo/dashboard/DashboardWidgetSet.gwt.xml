@@ -30,9 +30,9 @@
 
     <inherits name="com.vaadin.addon.timeline.gwt.TimelineWidgetSet" />
 
-    
-
-    
-
     <inherits name="com.vaadin.addon.touchkit.gwt.TouchKitWidgetSet" />
+    
+    <replace-with class="com.vaadin.demo.dashboard.client.CustomThemeLoader">
+        <when-type-is class="com.vaadin.addon.touchkit.gwt.client.ThemeLoader"/>
+    </replace-with>
 </module>
